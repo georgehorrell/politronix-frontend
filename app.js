@@ -8,3 +8,25 @@
 
 var port = 8081;
 var http = require('http');
+var express = require('express');
+var path = require('path');
+var pug = require('pug');
+
+var app = express();
+var server = http.createServer(app);
+var io = require('socket.io')(server);
+
+app.use(express.static(path.join(__dirname + '/public')));
+
+app.get('/', function(req, res) {
+    var index = pug.renderFile('views/index.pug');
+    res.send(index);
+});
+
+io.on('connection', function(socket) {
+
+});
+
+server.listen(port, function() {
+    console.log("listening on port: " + port);
+});
