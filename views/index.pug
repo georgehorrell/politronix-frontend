@@ -1,10 +1,13 @@
-doctype html
-html(lang="en")
-    head
-        link(href='/css/style.css' rel='stylesheet')
-        title= pageTitle
-    body
-        h1 Politronix
-        p Pug is working
-        canvas#myCanvas
+extends layout
 
+block head-includes
+    script(type='text/javascript' src="https://cdn.plot.ly/plotly-latest.min.js")
+    link(rel='stylesheet', href='/css/style.css')
+
+block content
+    .container
+        .col-md-12
+            h1 Politronix
+            p Live political insight from the crowd 
+            #tester
+            script(type='text/javascript' src='/js/chart.js')

@@ -1,1 +1,9 @@
-* { text-align: center; }
+body {
+    text-align: center;
+}
+
+#tester {
+    width: 100%;
+    height: auto;
+}
+
