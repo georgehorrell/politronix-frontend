@@ -11,8 +11,6 @@ var http = require('http');
 var express = require('express');
 var path = require('path');
 var pug = require('pug');
-var parse = require('csv-parse');
-var fs = require('fs');
 
 var app = express();
 var server = http.createServer(app);

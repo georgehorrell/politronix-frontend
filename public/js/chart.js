@@ -1,5 +1,7 @@
 TESTER = document.getElementById('tester');
 
+
+
 var layout = {
     xaxis: {title: 'Time'},
     yaxis: {title: 'Approval Rating'},
