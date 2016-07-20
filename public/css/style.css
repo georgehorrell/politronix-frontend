@@ -1,9 +1,55 @@
 body {
-    text-align: center;
 }
 
-#tester {
+.container {
     width: 100%;
-    height: auto;
+    padding: 0px;
+    background-image: url("/img/bokeh.jpg");
+    background-size: 100%;
+
 }
 
+.header {
+    text-align: left;
+}
+
+.header #logo {
+    background-image: url("/img/logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    text-align: left;
+    margin-top: 15px;
+    height: 50px;
+    width: 50px;
+}
+
+#search {
+    text-align: center;
+    height: 200px;
+
+}
+
+#search form {
+    padding: 40px 0px 100px 0px;
+}
+
+
+#search form .bar {
+    height: 60px;
+    width: 50%;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    line-height: 100px;
+    padding-left: 20px;
+    border: none;
+}
+
+
+#search form .button {
+    height: 60px;
+    width: 60px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    background-image: url("/img/search.png");
+    background-size: contain;
+}

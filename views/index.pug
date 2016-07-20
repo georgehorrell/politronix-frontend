@@ -1,13 +1,28 @@
 extends layout
 
 block head-includes
-    script(type='text/javascript' src="https://cdn.plot.ly/plotly-latest.min.js")
+    script(type='text/javascript' src='https://cdn.plot.ly/plotly-latest.min.js')
     link(rel='stylesheet', href='/css/style.css')
 
 block content
     .container
-        .col-md-12
-            h1 Politronix
-            p Live political insight from the crowd 
-            #tester
-            script(type='text/javascript' src='/js/chart.js')
+        .col-md-12.header
+            #logo
+            #search
+                form
+                    input(type='text' class='bar' name='search')
+                    input(type='submit' class='button' value=' ')
+            
+        .col-md-4
+
+        .col-md-4
+
+        .col-md-4
+
+        .col-md-4
+
+        .col-md-4
+
+        .col-md-4
+
+        .col-md-12#footer
