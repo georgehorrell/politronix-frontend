@@ -4,16 +4,26 @@ body {
 .container {
     width: 100%;
     padding: 0px;
-    background-image: url("/img/bokeh.jpg");
-    background-size: 100%;
 
 }
 
 .header {
     text-align: left;
+    background-color: rgba(255,215,0,1);
+    height: 300px;
 }
 
-.header #logo {
+#rain-canvas {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+#logo {
     background-image: url("/img/logo.png");
     background-size: contain;
     background-repeat: no-repeat;
@@ -25,31 +35,92 @@ body {
 
 #search {
     text-align: center;
-    height: 200px;
+    height: 130px;
+    vertical-align: top;
 
 }
 
 #search form {
-    padding: 40px 0px 100px 0px;
+    padding: 15px 0px 55px 0px;
+    overflow: hidden;
+    vertical-align: top;
 }
 
 
 #search form .bar {
-    height: 60px;
     width: 50%;
-    border-top-left-radius: 30px;
-    border-bottom-left-radius: 30px;
+    height: 60px;
+    border-style: none;
+    /* border-right-style: none;
+    border-width: 2px;
+    border-color: #2f4f4f; */
     line-height: 100px;
+    font-size: 18px;
     padding-left: 20px;
-    border: none;
+    background-color: rgba(200,200,200,0.8);
+}
+
+#search form .bar:focus {
+    outline: none;
 }
 
 
 #search form .button {
-    height: 60px;
     width: 60px;
-    border-top-right-radius: 30px;
-    border-bottom-right-radius: 30px;
+    height: 60px;
+    border-style: none;
+    /* border-left-style: none;
+    border-width: 2px;
+    border-color: #2f4f4f; */
     background-image: url("/img/search.png");
     background-size: contain;
+    background-color: rgba(150,150,150,0.8);
+}
+
+#search form .button:focus {
+    outline: none;
+}
+
+#tagline {
+    text-align: center;
+}
+
+#tagline p {
+    font-size: 20px;
+    color: rgba(50,50,50,1);
+}
+
+#tagline p a:link {
+    color: #235789;
+}
+
+.biggraph {
+    text-align:center;
+}
+
+#graph-div {
+    padding: 10px;
+    width:800px;
+    height:600px;
+}
+
+.tiles {
+    background-color: #235789;
+}
+
+.tiles .col-md-4 {
+    margin: 10px;
+    background-color: #FDFFFC;
+    height: 450px;
+}
+
+.footer {
+    background-color: rgba(255,215,0,1);
+    height: 80px;
+}
+
+.no-display {
+    display:none;
+    width:0px;
+    height:0px;
 }

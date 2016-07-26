@@ -17,6 +17,8 @@ block content
                 p Aggregated sentiment from #[a(href='http://www.twitter.com') Twitter], #[a(href='http://www.facebook.com') Facebook], #[a(href='http://www.reddit.com') Reddit] and #[a(href='how_we_get_data') others]. 
         .biggraph.col-md-12
             #graph-div
-            script(type='text/javascript' src='/js/graph-plotly.js')    
+            script.
+                var trace1 = !{JSON.stringify(graph_data)};   
+                var data = [trace1];
+                Plotly.newPlot('graph-div', data); 
         .footer.col-md-12
-
