@@ -19,8 +19,8 @@ var io = require('socket.io')(server);
 
 var mysql_connection = mysql.createConnection({
     host: 'localhost',
-    user: 'george',
-    password: 'testpw',
+    user: 'politronix',
+    password: 'sbs456Team',
     database: 'POLITRONIX'
 });
 
