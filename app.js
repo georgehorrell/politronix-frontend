@@ -37,28 +37,39 @@ function clean_mysql_datetime(raw_dt) {
     return date + " " + time;
 }
 
-mysql_connection.query('SELECT * FROM data', function(err, rows, fields) {
-    if (err) throw err;
-    for (var i = 0; i < rows.length; i++) {
-        var dt_clean = clean_mysql_datetime(rows[i].datetime.toString());
-        trace1.x[i] = dt_clean; 
-        trace1.y[i] = rows[i].score;
-    }
-});
-
 app.use(express.static(path.join(__dirname + '/public')));
 
 app.get('/', function(req, res) {
     var index = pug.renderFile('views/index.pug', { pageTitle: 'Politronix' } );
     res.send(index);
 });
-
+ 
+ //process on a refresh/call of page graph.pug
 app.get('/graph', function(req, res) {
-    var graph = pug.renderFile('views/graph.pug', { 
-        pageTitle: 'Graph View', 
-        graph_data: trace1,
+
+    var query = 'SELECT * FROM data WHERE topic="' + req.query.search + '"'; 
+    mysql_connection.query(query, function(err, rows, fields) {
+        if (err){
+            //throw err;
+            //above causes server to crash on error, should have better error handling? 
+            console.log(err); 
+        } 
+        for (var i = 0; i < rows.length; i++) {
+            var dt_clean = clean_mysql_datetime(rows[i].datetime.toString());
+            trace1.x[i] = dt_clean; 
+            trace1.y[i] = rows[i].score;
+        }
+
+        var graph = pug.renderFile('views/graph.pug', { 
+            pageTitle: 'Graph View', 
+            graph_data: trace1,
+        });
+
+        res.send(graph);
+        //need to reset data in arrays for each query. will need to thread later on 
+        trace1.x = [];
+        trace1.y = [];
     });
-    res.send(graph);
 });
 
 
