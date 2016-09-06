@@ -7,18 +7,21 @@ block head-includes
     
 block content
     .container
-        .header.col-md-12
-            #logo
-            #search
+        .header
+            .col-md-4
+                #logo
+                #tagline
+                p.tag Real time political sentiment analysis 
+            .col-md-5
+            .col-md-3    
+              #search
                 form
-                    input(type='text' class='bar' name='search' placeholder='How does the world feel about...?' autofocus)
-                    input(type='submit' class='button' value=' ')
-            #tagline
-                p Aggregated sentiment from #[a(href='http://www.twitter.com') Twitter], #[a(href='http://www.facebook.com') Facebook], #[a(href='http://www.reddit.com') Reddit] and #[a(href='how_we_get_data') others]. 
+                    input(type='text' class='bar' name='search' autofocus)
+                    //input(type='submit' class='button' value=' ')
         .biggraph.col-md-12
             #graph-div
             script.
                 var trace1 = !{JSON.stringify(graph_data)};   
                 var data = [trace1];
                 Plotly.newPlot('graph-div', data); 
-        .footer.col-md-12
+        

@@ -9,8 +9,9 @@ body {
 
 .header {
     text-align: left;
-    background-color: rgba(255,215,0,1);
-    height: 300px;
+    /*background-color: rgba(255,215,0,1);*/
+    background-color: #eee;
+    height: 125px;
 }
 
 #rain-canvas {
@@ -24,18 +25,30 @@ body {
 }
 
 #logo {
-    background-image: url("/img/logo.png");
+    background-image: url("/img/Politronix_black.png");
     background-size: contain;
     background-repeat: no-repeat;
     text-align: left;
-    margin-top: 15px;
+    /*margin-top: 15px;*/
     height: 50px;
-    width: 50px;
+   /* width: 50px;*/
+   margin-top: 15px;
+}
+
+.tag{
+    font-size: 16px;
+    padding-left: 5px; 
+}
+
+#favIcon {
+    /*<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">*/
+    background-image: url("/img/favicon-16x16_360.png");
+
 }
 
 #search {
     text-align: center;
-    height: 130px;
+    /*height: 130px;*/
     vertical-align: top;
 
 }
@@ -48,8 +61,8 @@ body {
 
 
 #search form .bar {
-    width: 50%;
-    height: 60px;
+    width: 90%;
+    height: 40px;
     border-style: none;
     /* border-right-style: none;
     border-width: 2px;
@@ -58,6 +71,7 @@ body {
     font-size: 18px;
     padding-left: 20px;
     background-color: rgba(200,200,200,0.8);
+    margin-top: 15px;
 }
 
 #search form .bar:focus {
@@ -72,7 +86,8 @@ body {
     /* border-left-style: none;
     border-width: 2px;
     border-color: #2f4f4f; */
-    background-image: url("/img/search.png");
+    background-image: url("/img/logo.png");
+    background-repeat: no-repeat;
     background-size: contain;
     background-color: rgba(150,150,150,0.8);
 }
@@ -83,6 +98,8 @@ body {
 
 #tagline {
     text-align: center;
+    font-size: 16px;
+    padding-left: 5px; 
 }
 
 #tagline p {
@@ -115,7 +132,7 @@ body {
 }
 
 .footer {
-    background-color: rgba(255,215,0,1);
+    background-color: #eee;;
     height: 80px;
 }
 
