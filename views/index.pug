@@ -2,7 +2,7 @@ extends layout
 
 block head-includes
     script(type='text/javascript' src='https://cdn.plot.ly/plotly-latest.min.js')
-    script(type='text/javascript' src='smoothie_scripts/smoothie.js')    
+    script(type='text/javascript' src='/smoothie.js')      
     link(rel='stylesheet', href='/css/style.css')
     
 block content
@@ -20,6 +20,22 @@ block content
                     //input(type='submit' class='button' value=' ')
         .biggraph.col-md-12
             #graph-div
-            script(type='text/javascript' src='/js/graph-plotly.js')    
+            script.
+                var trace1 = !{JSON.stringify(graph_data)};  
+                var trace2 = !{JSON.stringify(graph_data2)}; 
+                trace1['name'] = 'Clinton'; 
+                trace2['name'] = 'Trump'; 
+                trace2['line']= { 'color':'rgb(219, 64, 82)'}; 
+                var data = [trace1, trace2];
+                var layout = {
+                    title:'Trump vs. Clinton',
+                    xaxis: {
+                        title: 'Time'
+                    },
+                    yaxis: {
+                        title: 'Sentiment'
+                    }
+                };
+                Plotly.newPlot('graph-div', data, layout);    
 
 

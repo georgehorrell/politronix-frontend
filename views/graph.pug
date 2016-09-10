@@ -2,7 +2,7 @@ extends layout
 
 block head-includes
     script(type='text/javascript' src='https://cdn.plot.ly/plotly-latest.min.js')
-    script(type='text/javascript' src='smoothie_scripts/smoothie.js')    
+    script(type='text/javascript' src='/smoothie.js')    
     link(rel='stylesheet', href='/css/style.css')
     
 block content
@@ -21,7 +21,18 @@ block content
         .biggraph.col-md-12
             #graph-div
             script.
-                var trace1 = !{JSON.stringify(graph_data)};   
+                var trace1 = !{JSON.stringify(graph_data)};  
+                var topicTerm = !{JSON.stringify(topic)}; 
+                console.log(topicTerm);  
+                trace1['name'] = topicTerm; 
                 var data = [trace1];
-                Plotly.newPlot('graph-div', data); 
-        
+                var layout = {
+                    title: topicTerm + ' Sentiment',
+                    xaxis: {
+                        title: 'Time'
+                    },
+                    yaxis: {
+                        title: 'Sentiment'
+                    }
+                };
+                Plotly.newPlot('graph-div', data, layout); 
