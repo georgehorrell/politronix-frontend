@@ -22,12 +22,12 @@ var mysql_connection = mysql.createConnection({
     user: 'politronix',
     password: 'sbs456Team',
     database: 'POLITRONIX' 
-
-   /* host: process.env.RDS_HOSTNAME,
+/*
+    host: process.env.RDS_HOSTNAME,
     user: process.env.RDS_USERNAME, 
     password: process.env.RDS_PASSWORD, 
     port: process.env.RDS_PORT,
-    database: process.env.RDS_DB_NAME*/
+    database: process.env.RDS_DB_NAME */
 });
 
 mysql_connection.connect();
@@ -42,9 +42,11 @@ trace2.x = [];
 trace2.y = [];
 trace2.data = 'scatter';
 
+var data_struct = [];
+
 function clean_mysql_datetime(raw_dt) {
     var year = raw_dt.getFullYear(); 
-    var month = raw_dt.getMonth(); 
+    var month = raw_dt.getMonth() + 1;  
     if (month < 10){
         month = "0" + month; 
     }
@@ -117,32 +119,74 @@ app.get('/', function(req, res) {
  
  //process on a refresh/call of page graph.pug
 app.get('/graph', function(req, res) {
-
-    var query = 'SELECT * FROM data WHERE topic="' + req.query.search + '"'; 
      
+    var query = 'SELECT * FROM data WHERE topic="'; 
+   // var topics = req.query.topics.split(' '); 
+   if(!Array.isArray(req.query.topics)) {
+    var topics = [req.query.topics]; 
+   }
+   else{
+    var topics = req.query.topics; 
+   }
+
+    console.log(topics.length); 
+    console.log(topics); 
+    //topics.sort(); 
+    for (var i = 0; i < topics.length; i++){
+        data_struct[i] = {}; 
+        data_struct[i]['name'] = topics[i]; 
+        data_struct[i]['data_points'] = 0; 
+        data_struct[i].x = []; 
+        data_struct[i].y = []; 
+        query = query + topics[i] + '"'; 
+        if(i != topics.length -1){
+            query = query + ' OR topic="'; 
+        }
+        else{
+            query = query + ' ORDER BY topic'; 
+        }
+    }
+
     mysql_connection.query(query, function(err, rows, fields) {
         if (err){
             //throw err;
             //above causes server to crash on error, should have better error handling? 
             console.log(err); 
         } 
+        var topicCount = 0; 
         for (var i = 0; i < rows.length; i++) {
-            var dt_clean = clean_mysql_datetime(rows[i].datetime);
-            trace1.x[i] = dt_clean; 
-            trace1.y[i] = rows[i].score;
+            if(rows[i].topic == data_struct[topicCount].name) {
+                //do the stuff
+                var dt_clean = clean_mysql_datetime(rows[i].datetime);
+                data_struct[topicCount].x[data_struct[topicCount].data_points] = dt_clean; 
+                data_struct[topicCount].y[data_struct[topicCount].data_points] = rows[i].score; 
+                data_struct[topicCount].data_points++; 
+            }
+            else {
+                topicCount++;
+                if(i != rows.length - 1){
+                    i--; 
+                } 
+            }
         }
+        
 
         var graph = pug.renderFile('views/graph.pug', { 
             pageTitle: 'Politronix', 
-            graph_data: trace1,
+            graph_data: data_struct,
             topic: req.query.search,
         });
-        console.log(req.query.search); 
 
         res.send(graph);
         //need to reset data in arrays for each query. will need to thread later on 
-        trace1.x = [];
-        trace1.y = [];
+        for (var i = 0; i < topics.length; i++){
+            data_struct[i] = {}; 
+            /*data_struct[i]['name'] = topics[i]; 
+            data_struct[i]['data_points'] = 0; 
+            data_struct[i].x = []; 
+            data_struct[i].y = []; */
+    }
+        
     });
 });
 

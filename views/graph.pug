@@ -15,18 +15,40 @@ block content
             .col-md-5
             .col-md-3    
               #search
-                form
-                    input(type='text' class='bar' name='search' autofocus)
-                    //input(type='submit' class='button' value=' ')
-        .biggraph.col-md-12
+                ABOUT
+        .col-md-2.side
+            form(method='GET').side-form
+                p Topics
+                .checkbox
+                    input(type='checkbox' name='topics' value='clinton')
+                    p Hillary Clinton
+                .checkbox    
+                    input(type='checkbox' name='topics' value='johnson')
+                    p Gary Johnson
+                .checkbox
+                    input(type='checkbox' name='topics' value='kaine')
+                    p Tim Kaine
+                .checkbox
+                    input(type='checkbox' name='topics' value='pence')
+                    p Mike Pence
+                .checkbox
+                    input(type='checkbox' name='topics' value='trump')
+                    p Donald Trump
+                .checkbox
+                    input(type='checkbox' name='topics' value='stein')
+                    p Jill Stein
+                .checkbox
+                    input(type='checkbox' name='topics' value='democrat')
+                    p Democrat
+                .checkbox
+                    input(type='checkbox' name='topics' value='republican')
+                    p Republican
+                input(type='submit' value='Create Graph').btn.btn-graph
+        .biggraph.col-md-8
             #graph-div
             script.
                 var trace1 = !{JSON.stringify(graph_data)};  
-                var topicTerm = !{JSON.stringify(topic)}; 
-                console.log(topicTerm);  
-                trace1['name'] = topicTerm; 
-                var data = [trace1];
-                var layout = {
+                /*var layout = {
                     title: topicTerm + ' Sentiment',
                     xaxis: {
                         title: 'Time'
@@ -34,5 +56,5 @@ block content
                     yaxis: {
                         title: 'Sentiment'
                     }
-                };
-                Plotly.newPlot('graph-div', data, layout); 
+                };*/
+                Plotly.newPlot('graph-div', trace1); 

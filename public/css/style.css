@@ -141,3 +141,20 @@ body {
     width:0px;
     height:0px;
 }
+
+.side {
+    background-color: black;
+    color: white;
+}
+
+.side-form {
+     padding-left: 10px; 
+    margin-bottom: 100%;
+}
+
+.btn-graph {
+    background-color: black;
+    border-color: gray;
+    border-radius: 10px;
+    border-width: medium;
+}

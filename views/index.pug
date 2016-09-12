@@ -18,6 +18,8 @@ block content
                 form(action='/graph')
                     input(type='text' class='bar' name='search' autofocus)
                     //input(type='submit' class='button' value=' ')
+        .header 
+            button.btn-default
         .biggraph.col-md-12
             #graph-div
             script.
@@ -27,6 +29,7 @@ block content
                 trace2['name'] = 'Trump'; 
                 trace2['line']= { 'color':'rgb(219, 64, 82)'}; 
                 var data = [trace1, trace2];
+                console.log(data); 
                 var layout = {
                     title:'Trump vs. Clinton',
                     xaxis: {
