@@ -18,16 +18,16 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 
 var mysql_connection = mysql.createConnection({
-    host: 'localhost',
+    /*host: 'localhost',
     user: 'politronix',
     password: 'sbs456Team',
-    database: 'POLITRONIX' 
-/*
+    database: 'POLITRONIX' */
+    
     host: process.env.RDS_HOSTNAME,
     user: process.env.RDS_USERNAME, 
     password: process.env.RDS_PASSWORD, 
     port: process.env.RDS_PORT,
-    database: process.env.RDS_DB_NAME */
+    database: process.env.RDS_DB_NAME 
 });
 
 mysql_connection.connect();
@@ -74,7 +74,20 @@ app.use(express.static(path.join(__dirname + '/public')));
 app.use(express.static(path.join(__dirname + '/node_modules/smoothie')));
 
 app.get('/', function(req, res) {
-    var query = "SELECT * FROM data WHERE topic='clinton' or topic='trump'";
+    var query = "SELECT * FROM data WHERE topic='clinton' or topic='trump' ORDER BY topic";
+
+    data_struct[0] = {}
+    data_struct[0]['name'] = 'clinton'; 
+    data_struct[0]['data_points'] = 0; 
+    data_struct[0].x = []; 
+    data_struct[0].y = []; 
+
+    data_struct[1] = {}
+    data_struct[1]['name'] = 'trump'; 
+    data_struct[1]['data_points'] = 0; 
+    data_struct[1].x = []; 
+    data_struct[1].y = []; 
+
 
     mysql_connection.query(query, function(err, rows, fields) {
         if (err){
@@ -82,56 +95,66 @@ app.get('/', function(req, res) {
             //above causes server to crash on error, should have better error handling? 
             console.log(err); 
         } 
-        var clintonCount = 0; 
-        var trumpCount = 0; 
+        var topicCount = 0; 
         for (var i = 0; i < rows.length; i++) {
-            var dt_clean = clean_mysql_datetime(rows[i].datetime);
-            if(rows[i].topic =='clinton'){
-                trace1.x[clintonCount] = dt_clean; 
-                trace1.y[clintonCount] = rows[i].score;
-                clintonCount++; 
+            if(rows[i].topic == data_struct[topicCount].name) {
+                //do the stuff
+                var dt_clean = clean_mysql_datetime(rows[i].datetime);
+                data_struct[topicCount].x[data_struct[topicCount].data_points] = dt_clean; 
+                data_struct[topicCount].y[data_struct[topicCount].data_points] = rows[i].score; 
+                data_struct[topicCount].data_points++; 
             }
-            else{
-                trace2.x[trumpCount] = dt_clean; 
-                trace2.y[trumpCount] = rows[i].score;
-                trumpCount++; 
+            else {
+                topicCount++;
+                if(i != rows.length - 1){
+                    i--; 
+                } 
             }
-            
         }
 
-        var graph = pug.renderFile('views/index.pug', { 
+        var graph = pug.renderFile('views/graph.pug', { 
             pageTitle: 'Politronix', 
-            graph_data: trace1,
-            graph_data2: trace2
+            graph_data: data_struct,
         });
 
         res.send(graph);
         //need to reset data in arrays for each query. will need to thread later on 
-        trace1.x = [];
-        trace1.y = [];
-        trace2.x = [];
-        trace2.y = [];
+        data_struct = [];
     });
-
-    //var index = pug.renderFile('views/index.pug', { pageTitle: 'Politronix' } );
-    //res.send(index);
 }); 
  
  //process on a refresh/call of page graph.pug
 app.get('/graph', function(req, res) {
      
-    var query = 'SELECT * FROM data WHERE topic="'; 
+    var query = 'SELECT * FROM data WHERE (topic="'; 
    // var topics = req.query.topics.split(' '); 
    if(!Array.isArray(req.query.topics)) {
     var topics = [req.query.topics]; 
    }
    else{
     var topics = req.query.topics; 
+    topics.sort(); 
+   }
+   console.log(req.query.frame);
+   var freq = ')'; 
+   switch(req.query.frame) {
+    case 'hour':
+        freq += ' AND writeinterval="60"'; 
+    break; 
+    case 'fiveHour': 
+        freq += ' AND writeinterval="300"'; 
+    break; 
+    case 'day': 
+        freq += ' AND writeinterval="1200"';
+    break; 
+    case 'week': 
+        freq += ' AND writeinterval="8000"';
+    break; 
+    case 'month':
+        freq += ' AND writeinterval="32000"';
+    break; 
    }
 
-    console.log(topics.length); 
-    console.log(topics); 
-    //topics.sort(); 
     for (var i = 0; i < topics.length; i++){
         data_struct[i] = {}; 
         data_struct[i]['name'] = topics[i]; 
@@ -143,9 +166,11 @@ app.get('/graph', function(req, res) {
             query = query + ' OR topic="'; 
         }
         else{
-            query = query + ' ORDER BY topic'; 
+            query = query + freq + ' ORDER BY topic, datetime'; 
         }
     }
+    console.log(query); 
+    //data_struct[data_struct.length] = {}; 
 
     mysql_connection.query(query, function(err, rows, fields) {
         if (err){
@@ -174,19 +199,11 @@ app.get('/graph', function(req, res) {
         var graph = pug.renderFile('views/graph.pug', { 
             pageTitle: 'Politronix', 
             graph_data: data_struct,
-            topic: req.query.search,
         });
 
         res.send(graph);
         //need to reset data in arrays for each query. will need to thread later on 
-        for (var i = 0; i < topics.length; i++){
-            data_struct[i] = {}; 
-            /*data_struct[i]['name'] = topics[i]; 
-            data_struct[i]['data_points'] = 0; 
-            data_struct[i].x = []; 
-            data_struct[i].y = []; */
-    }
-        
+        data_struct = [];
     });
 });
 

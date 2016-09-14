@@ -113,6 +113,7 @@ body {
 
 .biggraph {
     text-align:center;
+    margin-top: 10px; 
 }
 
 #graph-div {
@@ -147,7 +148,7 @@ body {
 .side {
     background-color: black;
     color: white;
-    margin-top: 10px;
+    margin-top: 20px;
      font-size: 16px;
     height: 100vh;
 }
@@ -188,6 +189,11 @@ p.head {
 
 p.aboutFont {
     color: gray;
+}
+
+p.clinton-dot {
+    background-image: url('/img/clinton_blue.png');
+    background-repeat: no-repeat;
 }
 
 
