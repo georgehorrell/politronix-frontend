@@ -22,35 +22,45 @@ block content
             form(method='GET' action='/graph').side-form
                 p.head Topics
                 .checkbox
-                    input(type='checkbox' name='topics' value='clinton')
-                    p Hillary Clinton 
+                    label
+                        input(type='checkbox' name='topics' value='clinton')
+                        p Hillary Clinton 
                 .checkbox
-                    input(type='checkbox' name='topics' value='trump')
-                    p Donald Trump
+                    label
+                        input(type='checkbox' name='topics' value='trump')
+                        p Donald Trump
                 .checkbox    
-                    input(type='checkbox' name='topics' value='johnson')
-                    p Gary Johnson
+                    label
+                        input(type='checkbox' name='topics' value='johnson')
+                        p Gary Johnson
                 .checkbox
-                    input(type='checkbox' name='topics' value='stein')
-                    p Jill Stein
+                    label
+                        input(type='checkbox' name='topics' value='stein')
+                        p Jill Stein
                 .checkbox
-                    input(type='checkbox' name='topics' value='kaine')
-                    p Tim Kaine
+                    label
+                        input(type='checkbox' name='topics' value='kaine')
+                        p Tim Kaine
                 .checkbox
-                    input(type='checkbox' name='topics' value='pence')
-                    p Mike Pence
+                    label
+                        input(type='checkbox' name='topics' value='pence')
+                        p Mike Pence
                 .checkbox
-                    input(type='checkbox' name='topics' value='democrat')
-                    p Democrat
+                    label
+                        input(type='checkbox' name='topics' value='democrat')
+                        p Democrat
                 .checkbox
-                    input(type='checkbox' name='topics' value='republican')
-                    p Republican
-                select(name="frame")
-                    option(value="hour") Last Hour
-                    option(value="fiveHour") Last 5 Hours
-                    option(value="day") Last Day
-                    option(value="week") Last Week
-                    option(value="month") Last Month
+                    label
+                        input(type='checkbox' name='topics' value='republican') 
+                        p Republican
+                .form-group
+                    select(name="frame" id="sel").form-control
+                        option Select Time Frame
+                        option(value="hour") Last Hour
+                        option(value="fiveHour") Last 5 Hours
+                        option(value="day") Last Day
+                        option(value="week") Last Week
+                        option(value="month") Last Month
                 input(type='submit' value='Create Graph').btn.btn-graph
         .biggraph.col-md-8
             #graph-div
@@ -59,13 +69,13 @@ block content
                     return s[0].toUpperCase() + s.substr(1);
                 }
 
-                var trace1 = !{JSON.stringify(graph_data)};  
-                var trace2 = [trace1]; 
+                var trace1 = !{JSON.stringify(graph_data)};   
                 //console.log(trace1.length); 
                 console.log(trace1); 
                 for (var i = 0; i < trace1.length; i++) { 
                     trace1[i]['name'] = capitalize(trace1[i]['name']); 
                     trace1[i]['line'] = {};
+                    trace1[i]['mode'] = 'lines'; 
                     switch(trace1[i]['name']) {
                         case 'Clinton': 
                             trace1[i]['line']['color'] = 'rgb(40, 9, 236)'; 

@@ -175,6 +175,7 @@ body {
 
 p.head {
     font-size: 24px; 
+    text-align: center;
 }
 .row{
     height: 100%;
@@ -196,4 +197,17 @@ p.clinton-dot {
     background-repeat: no-repeat;
 }
 
+label.drop {
+    font-size: 24px; 
+    font-weight: normal;
+}
+
+.form-group {
+    margin-bottom: 20px; 
+    text-align: center; 
+}
+
+.form-control { 
+    width: 85%;
+}
 

@@ -18,7 +18,7 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 
 var mysql_connection = mysql.createConnection({
-    /*host: 'localhost',
+   /* host: 'localhost',
     user: 'politronix',
     password: 'sbs456Team',
     database: 'POLITRONIX' */
@@ -32,17 +32,10 @@ var mysql_connection = mysql.createConnection({
 
 mysql_connection.connect();
 
-var trace1 = {};
-trace1.x = [];
-trace1.y = [];
-trace1.data = 'scatter';
-
-var trace2 = {}; 
-trace2.x = [];
-trace2.y = [];
-trace2.data = 'scatter';
-
 var data_struct = [];
+
+var time_shift; 
+
 
 function clean_mysql_datetime(raw_dt) {
     var year = raw_dt.getFullYear(); 
@@ -135,23 +128,40 @@ app.get('/graph', function(req, res) {
     var topics = req.query.topics; 
     topics.sort(); 
    }
-   console.log(req.query.frame);
+
+   current_time = Date.now();
+   var date = new Date(current_time).toISOString();
    var freq = ')'; 
    switch(req.query.frame) {
     case 'hour':
-        freq += ' AND writeinterval="60"'; 
+        freq += ' AND writeinterval="60" AND datetime BETWEEN "'; 
+        time_shift = 60 * 60 * 1000; 
+        var first_date = new Date(current_time-time_shift).toISOString();
+        freq = freq + first_date + '" AND "' + date + '"'; 
     break; 
     case 'fiveHour': 
-        freq += ' AND writeinterval="300"'; 
+        freq += ' AND writeinterval="300" AND datetime BETWEEN "';
+        time_shift = 60 * 60 * 1000 * 5;
+        var first_date = new Date(current_time-time_shift).toISOString();
+        freq = freq + first_date + '" AND "' + date + '"'; 
     break; 
     case 'day': 
-        freq += ' AND writeinterval="1200"';
+        freq += ' AND writeinterval="1200" AND datetime BETWEEN "';
+        time_shift = 60 * 60 * 1000 * 24;
+        var first_date = new Date(current_time-time_shift).toISOString();
+        freq = freq + first_date + '" AND "' + date + '"'; 
     break; 
     case 'week': 
-        freq += ' AND writeinterval="8000"';
+        freq += ' AND writeinterval="8000" AND datetime BETWEEN "';
+        time_shift = 60 * 60 * 1000 * 24 * 7;
+        var first_date = new Date(current_time-time_shift).toISOString();
+        freq = freq + first_date + '" AND "' + date + '"'; 
     break; 
     case 'month':
-        freq += ' AND writeinterval="32000"';
+        freq += ' AND writeinterval="32000" AND datetime BETWEEN "';
+        time_shift = 60 * 60 * 1000 * 24 * 7 * 4;
+        var first_date = new Date(current_time-time_shift).toISOString();
+        freq = freq + first_date + '" AND "' + date + '"'; 
     break; 
    }
 
@@ -194,7 +204,6 @@ app.get('/graph', function(req, res) {
                 } 
             }
         }
-        
 
         var graph = pug.renderFile('views/graph.pug', { 
             pageTitle: 'Politronix', 
