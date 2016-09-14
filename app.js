@@ -67,7 +67,13 @@ app.use(express.static(path.join(__dirname + '/public')));
 app.use(express.static(path.join(__dirname + '/node_modules/smoothie')));
 
 app.get('/', function(req, res) {
-    var query = "SELECT * FROM data WHERE topic='clinton' or topic='trump' ORDER BY topic";
+    current_time = Date.now();
+    var date = new Date(current_time).toISOString();
+    freq = 'AND writeinterval="60" AND datetime BETWEEN "'; 
+    time_shift = 60 * 60 * 1000; 
+    var first_date = new Date(current_time-time_shift).toISOString();
+    freq = freq + first_date + '" AND "' + date + '"'; 
+    var query = 'SELECT * FROM data WHERE (topic="clinton" OR topic="trump") ' + freq + ' ORDER BY topic, datetime';
 
     data_struct[0] = {}
     data_struct[0]['name'] = 'clinton'; 
