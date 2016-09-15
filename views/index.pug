@@ -11,34 +11,72 @@ block content
             .col-md-4
                 #logo
                 #tagline
-                p.tag Real time political sentiment analysis 
+                p.tag Real-time political sentiment analysis 
             .col-md-5
-            .col-md-3    
-              #search
-                form(action='/graph')
-                    input(type='text' class='bar' name='search' autofocus)
-                    //input(type='submit' class='button' value=' ')
-        .header 
-            button.btn-default
-        .biggraph.col-md-12
-            #graph-div
-            script.
-                var trace1 = !{JSON.stringify(graph_data)};  
-                var trace2 = !{JSON.stringify(graph_data2)}; 
-                trace1['name'] = 'Clinton'; 
-                trace2['name'] = 'Trump'; 
-                trace2['line']= { 'color':'rgb(219, 64, 82)'}; 
-                var data = [trace1, trace2];
-                console.log(data); 
-                var layout = {
-                    title:'Trump vs. Clinton',
-                    xaxis: {
-                        title: 'Time'
-                    },
-                    yaxis: {
-                        title: 'Sentiment'
-                    }
-                };
-                Plotly.newPlot('graph-div', data, layout);    
+            .col-md-3
+        .col-md-2.side
+            form(method='GET' action='/graph').side-form
+                h4.head Topics
+                .checkbox
+                    label
+                        input(type='checkbox' name='topics' value='clinton')
+                        p Hillary Clinton 
+                .checkbox
+                    label
+                        input(type='checkbox' name='topics' value='trump')
+                        p Donald Trump
+                .checkbox    
+                    label
+                        input(type='checkbox' name='topics' value='johnson')
+                        p Gary Johnson
+                .checkbox
+                    label
+                        input(type='checkbox' name='topics' value='stein')
+                        p Jill Stein
+                .checkbox
+                    label
+                        input(type='checkbox' name='topics' value='kaine')
+                        p Tim Kaine
+                .checkbox
+                    label
+                        input(type='checkbox' name='topics' value='pence')
+                        p Mike Pence
+                .checkbox
+                    label
+                        input(type='checkbox' name='topics' value='democrat')
+                        p Democrat
+                .checkbox
+                    label
+                        input(type='checkbox' name='topics' value='republican') 
+                        p Republican
+                .form-group
+                    select(name="frame" id="sel").form-control
+                        option Select Time Frame
+                        option(value="hour") Last Hour
+                        option(value="fiveHour") Last 5 Hours
+                        option(value="day") Last Day
+                        option(value="week") Last Week
+                        option(value="month") Last Month
+                input(type='submit' value='Create Graph').btn.btn-graph    
+        .biggraph.col-md-8
+            #about-div
+                h1.about-header Welcome to Politronix!
+                h3.about-header Politronix is your site for live data on how people feel about current political topics.
+                h4.about-header The 2016 Election
+                p.about-text The 2016 United States Presidential Election is shaping up to be one of the most interesting elections in history, and we wanted play a part in it!
+                p.about-text Polling is the standard for evaluating public opinion and predicting election results, but is increasingly inaccurate and has always been expensive. Election polls represent information from narrower demographics of the population due to increase in cell phone use and number of people online. However, the surplus of data from opinions expressed online provides new opportunities to automatically evaluate public opinion at low costs.
+                h4.about-header What we do
+                p.about-text Politronix measures the sentiment (a score of positive and negative feeling) towards political topics on Twitter in real-time.
+                p.about-text How? All of the public tweets from Twitter are streamed and sorted into selected political topics. Using the #[a(href='http://sentiwordnet.isti.cnr.it/') SentiWordNet 3.0] dictionary, the sentiment scores for the words within each tweet are summed to produce an overall sentiment score for how people are feeling about the topic. The average sentiment values for each topic are then graphed over various time intervals using #[a(href='https://plot.ly/feed/Plotly') Plotly].
+                h4.about-header Who we are
+                p.about-text The Politronix Team is four college students who wanted to build a website one summer. 
+                p.about-text We are three computer science majors and one liberal arts major driven to harness the power of computer science to increase the availability of information.
+                p.about-text Most likely, none of us will be called by a polling group to see how we will vote in the election because we don’t have home phones. However, new projects, like Politronix, are arising every day to change the way we look at data and give a new voice to the techy generation.
+                p.about-text Let us know what you think! 
+                p.about-text #[a(href='mailto:politronix.team@gmail.com') Email us] at politronix@gmail.com 
+                p.about-text Follow us on Twitter: #[a(href='https://twitter.com/politronix_team') @politronix]
+
+        .col-md-2
+               
 
 

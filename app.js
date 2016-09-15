@@ -18,16 +18,16 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 
 var mysql_connection = mysql.createConnection({
-   /* host: 'localhost',
+    host: 'localhost',
     user: 'politronix',
     password: 'sbs456Team',
-    database: 'POLITRONIX' */
+    database: 'POLITRONIX' 
     
-    host: process.env.RDS_HOSTNAME,
+    /*host: process.env.RDS_HOSTNAME,
     user: process.env.RDS_USERNAME, 
     password: process.env.RDS_PASSWORD, 
     port: process.env.RDS_PORT,
-    database: process.env.RDS_DB_NAME 
+    database: process.env.RDS_DB_NAME */
 });
 
 mysql_connection.connect();
@@ -186,7 +186,6 @@ app.get('/graph', function(req, res) {
         }
     }
     console.log(query); 
-    //data_struct[data_struct.length] = {}; 
 
     mysql_connection.query(query, function(err, rows, fields) {
         if (err){
@@ -221,6 +220,15 @@ app.get('/graph', function(req, res) {
         data_struct = [];
     });
 });
+
+app.get('/index', function(req, res) {
+    var graph = pug.renderFile('views/index.pug', { 
+            pageTitle: 'Politronix', 
+            graph_data: data_struct,
+        });
+
+        res.send(graph);
+}); 
 
 
 io.on('connection', function(socket) {
