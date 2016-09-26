@@ -4,12 +4,20 @@ block head-includes
     script(type='text/javascript' src='https://cdn.plot.ly/plotly-latest.min.js')
     script(type='text/javascript' src='/smoothie.js')      
     link(rel='stylesheet', href='/css/style.css')
+    script.
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-84276874-1', 'auto');
+        ga('send', 'pageview');
     
 block content
     .container
         .header
             .col-md-4
-                #logo
+                a(href='/')
+                    #logo
                 #tagline
                 p.tag Real-time political sentiment analysis 
             .col-md-5
@@ -63,18 +71,17 @@ block content
                 h1.about-header Welcome to Politronix!
                 h3.about-header Politronix is your site for live data on how people feel about current political topics.
                 h4.about-header The 2016 Election
-                p.about-text The 2016 United States Presidential Election is shaping up to be one of the most interesting elections in history, and we wanted play a part in it!
-                p.about-text Polling is the standard for evaluating public opinion and predicting election results, but is increasingly inaccurate and has always been expensive. Election polls represent information from narrower demographics of the population due to increase in cell phone use and number of people online. However, the surplus of data from opinions expressed online provides new opportunities to automatically evaluate public opinion at low costs.
-                h4.about-header What we do
+                p.about-text The 2016 United States Presidential Election is shaping up to be one of the most interesting elections in history, and we wanted to play a part in it!
+                p.about-text Polling is the standard for evaluating public opinion and predicting election results, but it is increasingly inaccurate and has always been expensive. Election polls represent information from narrower demographics of the population due to an increase in cell phone use and number of people online. However, the surplus of data from opinions expressed online provides new opportunities to automatically evaluate public opinion at low costs.
+                h4.about-header What We Do
                 p.about-text Politronix measures the sentiment (a score of positive and negative feeling) towards political topics on Twitter in real-time.
                 p.about-text How? All of the public tweets from Twitter are streamed and sorted into selected political topics. Using the #[a(href='http://sentiwordnet.isti.cnr.it/') SentiWordNet 3.0] dictionary, the sentiment scores for the words within each tweet are summed to produce an overall sentiment score for how people are feeling about the topic. The average sentiment values for each topic are then graphed over various time intervals using #[a(href='https://plot.ly/feed/Plotly') Plotly].
-                h4.about-header Who we are
-                p.about-text The Politronix Team is four college students who wanted to build a website one summer. 
-                p.about-text We are three computer science majors and one liberal arts major driven to harness the power of computer science to increase the availability of information.
+                h4.about-header Who We Are
+                p.about-text The Politronix Team is made up of three computer science majors and one liberal arts major driven to harness the power of computer science to increase the availability of information.
                 p.about-text Most likely, none of us will be called by a polling group to see how we will vote in the election because we don’t have home phones. However, new projects, like Politronix, are arising every day to change the way we look at data and give a new voice to the techy generation.
-                p.about-text Let us know what you think! 
-                p.about-text #[a(href='mailto:politronix.team@gmail.com') Email us] at politronix@gmail.com 
-                p.about-text Follow us on Twitter: #[a(href='https://twitter.com/politronix_team') @politronix]
+                p Let us know what you think! 
+                p #[a(href='mailto:politronix.team@gmail.com') Email us] at politronix.team@gmail.com 
+                p Follow us on Twitter: #[a(href='https://twitter.com/politronix_team') @politronix_team]
 
         .col-md-2
                

@@ -18,16 +18,16 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 
 var mysql_connection = mysql.createConnection({
-    host: 'localhost',
+    /*host: 'localhost',
     user: 'politronix',
     password: 'sbs456Team',
-    database: 'POLITRONIX' 
+    database: 'POLITRONIX' */
     
-    /*host: process.env.RDS_HOSTNAME,
+    host: process.env.RDS_HOSTNAME,
     user: process.env.RDS_USERNAME, 
     password: process.env.RDS_PASSWORD, 
     port: process.env.RDS_PORT,
-    database: process.env.RDS_DB_NAME */
+    database: process.env.RDS_DB_NAME
 });
 
 mysql_connection.connect();
@@ -185,7 +185,7 @@ app.get('/graph', function(req, res) {
             query = query + freq + ' ORDER BY topic, datetime'; 
         }
     }
-    console.log(query); 
+    //console.log(query); 
 
     mysql_connection.query(query, function(err, rows, fields) {
         if (err){
@@ -196,7 +196,6 @@ app.get('/graph', function(req, res) {
         var topicCount = 0; 
         for (var i = 0; i < rows.length; i++) {
             if(rows[i].topic == data_struct[topicCount].name) {
-                //do the stuff
                 var dt_clean = clean_mysql_datetime(rows[i].datetime);
                 data_struct[topicCount].x[data_struct[topicCount].data_points] = dt_clean; 
                 data_struct[topicCount].y[data_struct[topicCount].data_points] = rows[i].score; 

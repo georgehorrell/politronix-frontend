@@ -4,12 +4,19 @@ block head-includes
     script(type='text/javascript' src='https://cdn.plot.ly/plotly-latest.min.js')
     script(type='text/javascript' src='/smoothie.js')    
     link(rel='stylesheet', href='/css/style.css')
-    
+    script.
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-84276874-1', 'auto');
+        ga('send', 'pageview');
 block content
     .container
         .header
             .col-md-4
-                #logo
+                a(href='/')
+                    #logo
                 #tagline
                 p.tag Real-time political sentiment analysis 
             .col-md-5
@@ -17,7 +24,7 @@ block content
                 form(action='/index')
                     input(type='submit' value='About').btn.btn-link
         .col-md-2.side
-            form(method='GET' action='/graph').side-form
+            form(method='GET' action='/graph' id='inputInfo').side-form
                 h4.head Topics
                 .checkbox
                     label
@@ -57,9 +64,25 @@ block content
                         option(value="hour") Last Hour
                         option(value="fiveHour") Last 5 Hours
                         option(value="day") Last Day
-                        option(value="week") Last Week
-                        option(value="month") Last Month
+                        //option(value="week") Last Week
+                        //option(value="month") Last Month
                 input(type='submit' value='Create Graph').btn.btn-graph
+                //script.
+                    /*var elements = document.getElementsByClassName("class-1");
+                    var i; 
+                    for (i = 0, len = elements.length; i < len; i++) {
+                    // elements[i].style ...
+                        localStorage[i] = elements[i].value; 
+                    }
+                    document.getElementById('sel').onchange = function() {
+                    localStorage[i] = document.getElementById("sel").value;
+                    }
+                    window.onload= function(){
+                        for(var j = 0; j < localStorage.length; j++) {
+                            if(localStorage[i])
+                                document.getElementById("sel").value = localStorage['sel'];
+                        }
+                    }*/
         .biggraph.col-md-8
             .middle-title
                 h3#demo How are people on Twitter feeling about...?
@@ -166,3 +189,4 @@ block content
 
                 document.getElementById("demo").innerHTML = header;
                 Plotly.newPlot('graph-div', trace1, layout); 
+    
