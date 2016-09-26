@@ -18,16 +18,16 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 
 var mysql_connection = mysql.createConnection({
-    /*host: 'localhost',
+    host: 'localhost',
     user: 'politronix',
     password: 'sbs456Team',
-    database: 'POLITRONIX' */
+    database: 'POLITRONIX' 
     
-    host: process.env.RDS_HOSTNAME,
+    /*host: process.env.RDS_HOSTNAME,
     user: process.env.RDS_USERNAME, 
     password: process.env.RDS_PASSWORD, 
     port: process.env.RDS_PORT,
-    database: process.env.RDS_DB_NAME
+    database: process.env.RDS_DB_NAME */
 });
 
 mysql_connection.connect();
@@ -35,6 +35,95 @@ mysql_connection.connect();
 var data_struct = [];
 
 var time_shift; 
+
+function createPage(req, res, topics, time_frame) {
+
+    console.log("hello"); 
+    var query = 'SELECT * FROM data WHERE (topic="'; 
+
+    current_time = Date.now();
+    var date = new Date(current_time).toISOString();
+    var freq = ')'; 
+    switch(time_frame) {
+        case 'hour':
+            freq += ' AND writeinterval="60" AND datetime BETWEEN "'; 
+            time_shift = 60 * 60 * 1000; 
+            var first_date = new Date(current_time-time_shift).toISOString();
+            freq = freq + first_date + '" AND "' + date + '"'; 
+        break; 
+        case 'fiveHour': 
+            freq += ' AND writeinterval="300" AND datetime BETWEEN "';
+            time_shift = 60 * 60 * 1000 * 5;
+            var first_date = new Date(current_time-time_shift).toISOString();
+            freq = freq + first_date + '" AND "' + date + '"'; 
+        break; 
+        case 'day': 
+            freq += ' AND writeinterval="1200" AND datetime BETWEEN "';
+            time_shift = 60 * 60 * 1000 * 24;
+            var first_date = new Date(current_time-time_shift).toISOString();
+            freq = freq + first_date + '" AND "' + date + '"'; 
+        break; 
+        case 'week': 
+            freq += ' AND writeinterval="8000" AND datetime BETWEEN "';
+            time_shift = 60 * 60 * 1000 * 24 * 7;
+            var first_date = new Date(current_time-time_shift).toISOString();
+            freq = freq + first_date + '" AND "' + date + '"'; 
+        break; 
+        case 'month':
+            freq += ' AND writeinterval="32000" AND datetime BETWEEN "';
+            time_shift = 60 * 60 * 1000 * 24 * 7 * 4;
+            var first_date = new Date(current_time-time_shift).toISOString();
+            freq = freq + first_date + '" AND "' + date + '"'; 
+        break; 
+    }
+
+    for (var i = 0; i < topics.length; i++){
+        data_struct[i] = {}; 
+        data_struct[i]['name'] = topics[i]; 
+        data_struct[i]['data_points'] = 0; 
+        data_struct[i].x = []; 
+        data_struct[i].y = []; 
+        query = query + topics[i] + '"'; 
+        if(i != topics.length -1){
+            query = query + ' OR topic="'; 
+        }
+        else{
+            query = query + freq + ' ORDER BY topic, datetime'; 
+        }
+    } 
+
+    mysql_connection.query(query, function(err, rows, fields) {
+        if (err){
+            //throw err;
+            //above causes server to crash on error, should have better error handling? 
+            console.log(err); 
+        } 
+        var topicCount = 0; 
+        for (var i = 0; i < rows.length; i++) {
+            if(rows[i].topic == data_struct[topicCount].name) {
+                var dt_clean = clean_mysql_datetime(rows[i].datetime);
+                data_struct[topicCount].x[data_struct[topicCount].data_points] = dt_clean; 
+                data_struct[topicCount].y[data_struct[topicCount].data_points] = rows[i].score; 
+                data_struct[topicCount].data_points++; 
+            }
+            else {
+                topicCount++;
+                if(i != rows.length - 1){
+                    i--; 
+                } 
+            }
+        }
+
+        var graph = pug.renderFile('views/graph.pug', { 
+            pageTitle: 'Politronix', 
+            graph_data: data_struct,
+        });
+
+        res.send(graph);
+        //need to reset data in arrays for each query. will need to thread later on 
+        data_struct = [];
+    });
+}
 
 
 function clean_mysql_datetime(raw_dt) {
@@ -67,157 +156,23 @@ app.use(express.static(path.join(__dirname + '/public')));
 app.use(express.static(path.join(__dirname + '/node_modules/smoothie')));
 
 app.get('/', function(req, res) {
-    current_time = Date.now();
-    var date = new Date(current_time).toISOString();
-    freq = 'AND writeinterval="60" AND datetime BETWEEN "'; 
-    time_shift = 60 * 60 * 1000; 
-    var first_date = new Date(current_time-time_shift).toISOString();
-    freq = freq + first_date + '" AND "' + date + '"'; 
-    var query = 'SELECT * FROM data WHERE (topic="clinton" OR topic="trump") ' + freq + ' ORDER BY topic, datetime';
+    time_frame = 'hour'; 
+    topics = ['clinton', 'trump']; 
+    createPage(req, res, topics, time_frame); 
 
-    data_struct[0] = {}
-    data_struct[0]['name'] = 'clinton'; 
-    data_struct[0]['data_points'] = 0; 
-    data_struct[0].x = []; 
-    data_struct[0].y = []; 
-
-    data_struct[1] = {}
-    data_struct[1]['name'] = 'trump'; 
-    data_struct[1]['data_points'] = 0; 
-    data_struct[1].x = []; 
-    data_struct[1].y = []; 
-
-
-    mysql_connection.query(query, function(err, rows, fields) {
-        if (err){
-            //throw err;
-            //above causes server to crash on error, should have better error handling? 
-            console.log(err); 
-        } 
-        var topicCount = 0; 
-        for (var i = 0; i < rows.length; i++) {
-            if(rows[i].topic == data_struct[topicCount].name) {
-                //do the stuff
-                var dt_clean = clean_mysql_datetime(rows[i].datetime);
-                data_struct[topicCount].x[data_struct[topicCount].data_points] = dt_clean; 
-                data_struct[topicCount].y[data_struct[topicCount].data_points] = rows[i].score; 
-                data_struct[topicCount].data_points++; 
-            }
-            else {
-                topicCount++;
-                if(i != rows.length - 1){
-                    i--; 
-                } 
-            }
-        }
-
-        var graph = pug.renderFile('views/graph.pug', { 
-            pageTitle: 'Politronix', 
-            graph_data: data_struct,
-        });
-
-        res.send(graph);
-        //need to reset data in arrays for each query. will need to thread later on 
-        data_struct = [];
-    });
 }); 
  
  //process on a refresh/call of page graph.pug
 app.get('/graph', function(req, res) {
-     
-    var query = 'SELECT * FROM data WHERE (topic="'; 
-   // var topics = req.query.topics.split(' '); 
-   if(!Array.isArray(req.query.topics)) {
-    var topics = [req.query.topics]; 
-   }
-   else{
-    var topics = req.query.topics; 
-    topics.sort(); 
-   }
-
-   current_time = Date.now();
-   var date = new Date(current_time).toISOString();
-   var freq = ')'; 
-   switch(req.query.frame) {
-    case 'hour':
-        freq += ' AND writeinterval="60" AND datetime BETWEEN "'; 
-        time_shift = 60 * 60 * 1000; 
-        var first_date = new Date(current_time-time_shift).toISOString();
-        freq = freq + first_date + '" AND "' + date + '"'; 
-    break; 
-    case 'fiveHour': 
-        freq += ' AND writeinterval="300" AND datetime BETWEEN "';
-        time_shift = 60 * 60 * 1000 * 5;
-        var first_date = new Date(current_time-time_shift).toISOString();
-        freq = freq + first_date + '" AND "' + date + '"'; 
-    break; 
-    case 'day': 
-        freq += ' AND writeinterval="1200" AND datetime BETWEEN "';
-        time_shift = 60 * 60 * 1000 * 24;
-        var first_date = new Date(current_time-time_shift).toISOString();
-        freq = freq + first_date + '" AND "' + date + '"'; 
-    break; 
-    case 'week': 
-        freq += ' AND writeinterval="8000" AND datetime BETWEEN "';
-        time_shift = 60 * 60 * 1000 * 24 * 7;
-        var first_date = new Date(current_time-time_shift).toISOString();
-        freq = freq + first_date + '" AND "' + date + '"'; 
-    break; 
-    case 'month':
-        freq += ' AND writeinterval="32000" AND datetime BETWEEN "';
-        time_shift = 60 * 60 * 1000 * 24 * 7 * 4;
-        var first_date = new Date(current_time-time_shift).toISOString();
-        freq = freq + first_date + '" AND "' + date + '"'; 
-    break; 
-   }
-
-    for (var i = 0; i < topics.length; i++){
-        data_struct[i] = {}; 
-        data_struct[i]['name'] = topics[i]; 
-        data_struct[i]['data_points'] = 0; 
-        data_struct[i].x = []; 
-        data_struct[i].y = []; 
-        query = query + topics[i] + '"'; 
-        if(i != topics.length -1){
-            query = query + ' OR topic="'; 
-        }
-        else{
-            query = query + freq + ' ORDER BY topic, datetime'; 
-        }
+    if(!Array.isArray(req.query.topics)) {
+        var topics = [req.query.topics]; 
     }
-    //console.log(query); 
-
-    mysql_connection.query(query, function(err, rows, fields) {
-        if (err){
-            //throw err;
-            //above causes server to crash on error, should have better error handling? 
-            console.log(err); 
-        } 
-        var topicCount = 0; 
-        for (var i = 0; i < rows.length; i++) {
-            if(rows[i].topic == data_struct[topicCount].name) {
-                var dt_clean = clean_mysql_datetime(rows[i].datetime);
-                data_struct[topicCount].x[data_struct[topicCount].data_points] = dt_clean; 
-                data_struct[topicCount].y[data_struct[topicCount].data_points] = rows[i].score; 
-                data_struct[topicCount].data_points++; 
-            }
-            else {
-                topicCount++;
-                if(i != rows.length - 1){
-                    i--; 
-                } 
-            }
-        }
-
-        var graph = pug.renderFile('views/graph.pug', { 
-            pageTitle: 'Politronix', 
-            graph_data: data_struct,
-        });
-
-        res.send(graph);
-        //need to reset data in arrays for each query. will need to thread later on 
-        data_struct = [];
-    });
+    else{
+        var topics = req.query.topics; 
+        topics.sort(); 
+    }
+    var time_frame = req.query.frame; 
+    createPage(req, res, topics, time_frame); 
 });
 
 app.get('/index', function(req, res) {
@@ -225,7 +180,6 @@ app.get('/index', function(req, res) {
             pageTitle: 'Politronix', 
             graph_data: data_struct,
         });
-
         res.send(graph);
 }); 
 
